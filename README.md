@@ -1,4 +1,4 @@
-# IRROP Agent — Airline Reaccommodation Notification System
+# Airline Disruption Agent — Reaccommodation Notification System
 
 An AI-powered notification system that processes airline disruption reaccommodation messages and automatically generates personalized passenger notifications. Built using LangGraph multi-agent architecture and Claude Sonnet 4.5, the system validates input payloads, analyzes passenger-specific impacts (cabin downgrades/upgrades, rerouting, date changes), generates empathetic context-aware messages, and dispatches notifications through appropriate channels (SMS/Email) based on passenger preferences.
 

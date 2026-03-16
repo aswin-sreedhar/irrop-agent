@@ -1,10 +1,10 @@
 # IRROP Agent — Airline Reaccommodation Notification System
 
-An AI-powered notification system that processes airline SSBRES (Special Service Request) reaccommodation messages and automatically generates personalized passenger notifications. Built using LangGraph multi-agent architecture and Claude Sonnet 4.5, the system validates SSBRES payloads, analyzes passenger-specific impacts (cabin downgrades/upgrades, rerouting, date changes), generates empathetic context-aware messages, and dispatches notifications through appropriate channels (SMS/Email) based on passenger preferences.
+An AI-powered notification system that processes airline disruption reaccommodation messages and automatically generates personalized passenger notifications. Built using LangGraph multi-agent architecture and Claude Sonnet 4.5, the system validates input payloads, analyzes passenger-specific impacts (cabin downgrades/upgrades, rerouting, date changes), generates empathetic context-aware messages, and dispatches notifications through appropriate channels (SMS/Email) based on passenger preferences.
 
 ## Architecture
 
-The system uses a LangGraph state machine with **8 sequential nodes** that process SSBRES reaccommodation events:
+The system uses a LangGraph state machine with **8 sequential nodes** that process airline disruption reaccommodation events:
 
 ```
 ┌─────────────────┐
@@ -18,14 +18,14 @@ The system uses a LangGraph state machine with **8 sequential nodes** that proce
 ├──────────────────────────────────────────────────────────────────┤
 │                                                                  │
 │  0. validate_input                                               │
-│     • Verify SSBRES message structure and required fields       │
+│     • Verify input payload structure and required fields        │
 │     • Validate date/time formats                                │
 │     • Check disruption type is valid                            │
 │     • Cross-check passenger_ids referenced in segments          │
 │     • Return errors if validation fails                         │
 │                                                                  │
 │  1. identify_event                                               │
-│     • Parse SSBRES JSON payload                                 │
+│     • Parse input JSON payload                                  │
 │     • Extract PNR, passengers, itineraries, disruption info     │
 │     • Populate state with parsed data                           │
 │                                                                  │
@@ -91,13 +91,13 @@ The system uses a LangGraph state machine with **8 sequential nodes** that proce
 └──────────────────┘
 ```
 
-## SSBRES Payload Structure
+## Input Payload Structure
 
-The system processes SSBRES-style JSON payloads with the following structure:
+The system processes JSON payloads with the following structure:
 
 ```json
 {
-  "message_id": "SSBRES_2026031601_STU901",
+  "message_id": "MSG_2026031601_STU901",
   "pnr": "STU901",
   "booking_reference": "STU901",
   "disruption": {
@@ -279,7 +279,7 @@ Content-Type: application/json
 ```json
 {
   "pnr": "STU901",
-  "message_id": "SSBRES_2026031601_STU901",
+  "message_id": "MSG_2026031601_STU901",
   "disruption_type": "CANCELLATION",
   "passengers_notified": 2,
   "sms_count": 1,
@@ -350,8 +350,8 @@ Timestamp: 2026-03-16T09:57:16.869760
 
 ## API Endpoints
 
-- `POST /trigger-ssbres` - Process SSBRES message (accepts `pnr` or `raw_message`)
-- `GET /pnr/{pnr}` - Retrieve full SSBRES payload for a specific PNR
+- `POST /trigger-ssbres` - Process disruption message (accepts `pnr` or `raw_message`)
+- `GET /pnr/{pnr}` - Retrieve full input payload for a specific PNR
 - `GET /pnrs` - List all seeded PNRs in the database
 - `GET /health` - Health check
 
@@ -359,7 +359,7 @@ Timestamp: 2026-03-16T09:57:16.869760
 
 The system implements multi-layered validation:
 
-1. **Input Validation**: Verifies SSBRES message structure, date/time formats, disruption types
+1. **Input Validation**: Verifies input payload structure, date/time formats, disruption types
 2. **Impact Verification**: Cross-checks passenger analysis for completeness and cabin hierarchy logic
 3. **Self-Consistency Checking**: Extracts facts from generated messages and validates against source data
 4. **Message Validation**: Claude validates message accuracy and regenerates if needed
@@ -369,14 +369,14 @@ The system implements multi-layered validation:
 
 This is an **open-source, sanitized version** of a production notification system built for a **major Indian airline carrier**. The production implementation:
 
-- Ingests SSBRES messages in **EDIFACT format** via **IBM MQ**
+- Ingests disruption messages in industry-standard formats via message queues
 - Integrates with real **SMS gateways** (Twilio, Gupshup) and **email providers** (SendGrid)
 - Includes comprehensive **logging, monitoring, and alerting** (Datadog, PagerDuty)
 - Implements **regulatory compliance** features (GDPR, data retention policies)
 - Handles **thousands of notifications per day** during disruption events
 
 This demonstration version uses:
-- **JSON** instead of EDIFACT
+- **JSON** input payloads for simplicity
 - **In-memory SQLite** instead of production databases
 - **Console output** instead of real SMS/email dispatch
 - **Mock data** for testing purposes

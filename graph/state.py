@@ -6,16 +6,16 @@ from typing import TypedDict, Optional
 
 class IRROPState(TypedDict):
     """
-    Shared state for the SSBRES reaccommodation notification workflow.
+    Shared state for the SBRRES reaccommodation notification workflow.
 
     This state object flows through each node in the LangGraph agent,
-    processing SSBRES messages to analyze passenger reaccommodations,
+    processing SBRRES messages to analyze passenger reaccommodations,
     generate personalized notifications, and dispatch them through
     appropriate channels (SMS or Email).
     """
 
-    # Input - raw SSBRES message
-    raw_message: dict  # Full incoming SSBRES JSON payload
+    # Input - raw SBRRES message
+    raw_message: dict  # Full incoming SBRRES JSON payload
     pnr: str  # Booking reference
 
     # Parsed message components

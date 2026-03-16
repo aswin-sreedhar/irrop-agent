@@ -1,5 +1,5 @@
-# Mock PNR database for SSBRES message storage
-# Stores full SSBRES JSON payloads for reaccommodation scenarios
+# Mock PNR database for SBRRES message storage
+# Stores full SBRRES JSON payloads for reaccommodation scenarios
 
 from datetime import datetime, timedelta
 from sqlalchemy import create_engine, Column, String, Text, JSON
@@ -15,7 +15,7 @@ class PNRRecord(Base):
 
     pnr = Column(String, primary_key=True)
     message_id = Column(String, nullable=False)
-    payload = Column(JSON, nullable=False)  # Full SSBRES JSON message
+    payload = Column(JSON, nullable=False)  # Full SBRRES JSON message
     created_at = Column(String, nullable=False)
 
 
@@ -27,14 +27,14 @@ session = Session()
 
 
 def seed_database():
-    """Seed the database with realistic SSBRES messages"""
+    """Seed the database with realistic SBRRES messages"""
 
     now = datetime.now()
     tomorrow = now + timedelta(days=1)
 
     # Scenario 1: COK→DEL cancelled, rerouted via BOM with cabin downgrade for PAX001, date change for PAX002
     pnr1_payload = {
-        "message_id": "SSBRES_2026031601_STU901",
+        "message_id": "SBRRES_2026031601_STU901",
         "pnr": "STU901",
         "booking_reference": "STU901",
         "disruption": {
@@ -116,7 +116,7 @@ def seed_database():
 
     # Scenario 2: DEL→BOM delayed 180 minutes, both passengers on same new flight
     pnr2_payload = {
-        "message_id": "SSBRES_2026031602_YZA567",
+        "message_id": "SBRRES_2026031602_YZA567",
         "pnr": "YZA567",
         "booking_reference": "YZA567",
         "disruption": {
@@ -175,7 +175,7 @@ def seed_database():
 
     # Scenario 3: BLR→HYD→DEL, first leg diverted to MAA, reaccommodated on direct BLR→DEL with upgrade
     pnr3_payload = {
-        "message_id": "SSBRES_2026031603_VWX234",
+        "message_id": "SBRRES_2026031603_VWX234",
         "pnr": "VWX234",
         "booking_reference": "VWX234",
         "disruption": {
@@ -240,19 +240,19 @@ def seed_database():
     records = [
         PNRRecord(
             pnr="STU901",
-            message_id="SSBRES_2026031601_STU901",
+            message_id="SBRRES_2026031601_STU901",
             payload=pnr1_payload,
             created_at=now.isoformat()
         ),
         PNRRecord(
             pnr="YZA567",
-            message_id="SSBRES_2026031602_YZA567",
+            message_id="SBRRES_2026031602_YZA567",
             payload=pnr2_payload,
             created_at=now.isoformat()
         ),
         PNRRecord(
             pnr="VWX234",
-            message_id="SSBRES_2026031603_VWX234",
+            message_id="SBRRES_2026031603_VWX234",
             payload=pnr3_payload,
             created_at=now.isoformat()
         )
@@ -263,7 +263,7 @@ def seed_database():
 
 
 def get_pnr(pnr: str):
-    """Returns the full SSBRES message for a given PNR"""
+    """Returns the full SBRRES message for a given PNR"""
     record = session.query(PNRRecord).filter(PNRRecord.pnr == pnr).first()
     return record.payload if record else None
 

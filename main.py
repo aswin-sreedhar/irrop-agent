@@ -1,5 +1,5 @@
 # FastAPI entry point for the IRROP notification agent
-# Handles HTTP endpoints for triggering notifications from SSBRES reaccommodation messages
+# Handles HTTP endpoints for triggering notifications from SBRRES reaccommodation messages
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,8 +11,8 @@ from graph.state import IRROPState
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="IRROP Agent - SSBRES Processor",
-    description="AI-powered reaccommodation notification system for airline SSBRES messages",
+    title="IRROP Agent - SBRRES Processor",
+    description="AI-powered reaccommodation notification system for airline SBRRES messages",
     version="2.0.0"
 )
 
@@ -27,7 +27,7 @@ app.add_middleware(
 
 
 # Request models
-class TriggerSSBRESRequest(BaseModel):
+class TriggerSBRRESRequest(BaseModel):
     pnr: Optional[str] = None  # Fetch from database
     raw_message: Optional[dict] = None  # Or provide custom payload
 
@@ -36,7 +36,7 @@ class TriggerSSBRESRequest(BaseModel):
 async def startup_event():
     """Startup event handler"""
     print("\n" + "="*60)
-    print("IRROP Agent - SSBRES Processor running")
+    print("IRROP Agent - SBRRES Processor running")
     print("="*60 + "\n")
 
 
@@ -48,7 +48,7 @@ async def health_check():
 
 @app.get("/pnr/{pnr}")
 async def get_pnr_details(pnr: str):
-    """Get the raw SSBRES message for a given PNR"""
+    """Get the raw SBRRES message for a given PNR"""
     message = get_pnr(pnr)
 
     if not message:
@@ -64,11 +64,11 @@ async def list_all_pnrs():
 
 
 @app.post("/trigger-ssbres")
-async def trigger_ssbres(request: TriggerSSBRESRequest):
+async def trigger_ssbres(request: TriggerSBRRESRequest):
     """
-    Trigger SSBRES reaccommodation notification workflow.
+    Trigger SBRRES reaccommodation notification workflow.
 
-    Accepts either a PNR (fetches from database) or a raw SSBRES message,
+    Accepts either a PNR (fetches from database) or a raw SBRRES message,
     runs the LangGraph agent to analyze reaccommodations and dispatch
     personalized notifications to all passengers.
     """

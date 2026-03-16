@@ -1,5 +1,5 @@
 # Individual agent nodes
-# Contains discrete workflow steps: parse SSBRES message, analyze reaccommodations, generate notifications
+# Contains discrete workflow steps: parse SBRRES message, analyze reaccommodations, generate notifications
 
 import os
 import re
@@ -20,7 +20,7 @@ llm = ChatAnthropic(
 
 def validate_input(state: IRROPState) -> dict:
     """
-    Node 0: Validate raw SSBRES message structure and data integrity.
+    Node 0: Validate raw SBRRES message structure and data integrity.
 
     Verifies all required fields exist, data formats are correct, and
     referenced entities (passengers, segments) are consistent.
@@ -121,10 +121,10 @@ def validate_input(state: IRROPState) -> dict:
 
 def identify_event(state: IRROPState) -> dict:
     """
-    Node 1: Parse SSBRES message and extract key components.
+    Node 1: Parse SBRRES message and extract key components.
 
     Extracts PNR, passengers, itineraries, and disruption information
-    from the raw SSBRES JSON payload.
+    from the raw SBRRES JSON payload.
     """
     raw_message = state["raw_message"]
 
@@ -144,7 +144,7 @@ def identify_event(state: IRROPState) -> dict:
             "error": None
         }
     except Exception as e:
-        return {"error": f"Failed to parse SSBRES message: {str(e)}"}
+        return {"error": f"Failed to parse SBRRES message: {str(e)}"}
 
 
 def assess_impact(state: IRROPState) -> dict:
